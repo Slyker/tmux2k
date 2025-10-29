@@ -9,7 +9,15 @@ ping_function() {
     case $(uname -s) in
     Linux | Darwin)
         pingserver=$(get_tmux_option "@tmux2k-ping-server" "google.com")
-        pingtime=$(ping -c 1 "$pingserver" | tail -1 | awk '{split($4, times, "/"); printf "%.2f", times[2]}')
+        pingtime=$(ping -c 1 "$pingserver" | tail -1 | awk '{
+            split($4, times, "/");
+            value = times[2];
+            unit = $5;
+            if (unit == "s") {
+                value = value * 1000;
+            }
+            printf "%.2f", value;
+        }')
         echo "$pingtime ms"
         ;;
 
